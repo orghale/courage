@@ -1,0 +1,189 @@
+﻿@model IEnumerable<LottoGistAdmin.DataAccess.RemoteModel.LottoSchoolItemObj>
+@{
+    /**/
+
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-default" style="min-height: 500px">
+    <div class="panel-heading">
+        <div><span class="fa fa-user fa-2x" aria-hidden="true"></span> <b>LOTTO SCHOOL ITEM</b></div>
+    </div>
+    <div class="panel-body table-responsive">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group" style="padding-top: 20px">
+
+                    <a class="btn btn-sm btn-success pull-right" href="@Url.Action("_AddLottoSchoolItem", "LottoSchoolItem")" data-modal=""><i class="fa fa-plus"></i> New </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row ">
+
+            <div class="col-sm-12">
+                <div class="tab-content" style="min-height: 400px; background-color: #fff">
+                    @{
+                        var errorMessage = ViewBag.Error as string;
+                        if (!string.IsNullOrEmpty(errorMessage) && errorMessage.Length > 1)
+                        {
+                            <div class="bs-callout bs-callout-danger ">
+                                <h4>Error!</h4>
+                                <p>@Html.Raw(errorMessage)</p>
+                            </div>
+                        }
+                    }
+
+                    <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                               <th>
+                                    <b> TOPIC </b>
+                                </th>
+                                <th>
+                                    <b> CATEGORY </b>
+                                </th>
+                                <th>
+                                    <b> TITLE </b>
+                                </th>
+                                <th>
+                                    <b> CONTENT </b>
+                                </th>
+                                <th>
+                                    <b> TAGS </b>
+                                </th>
+                                <th>
+                                    <b> IMAGE PATH </b>
+                                </th>
+                                <th>
+                                    <b> IsPUBLISHED </b>
+                                </th>
+                                @*<th>
+                                    <b> STATUS </b>
+                                </th>*@
+                                <th style="width: 90px">
+                                    <b>ACTION</b>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var item in Model)
+                                {
+                            <tr>
+                                <td>@item.LottoSchoolTopicName</td>
+                                <td>@item.LottoSchoolCategoryName</td>
+                                <td>@item.Title</td>
+                                <td>@item.ItemContent</td>
+                                <td>@item.Tags</td>
+                                <td>@item.FeaturedImagePath</td>
+                                <td>@item.PublishStatusVal</td>
+                                @*<td>@item.StatusLabel</td>*@
+                                <td>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                            Action <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-default pull-right" role="menu">
+
+                                            <!-- EDITING LINK -->
+                                            <li>
+                                                <a href="@Url.Action("_EditLottoSchoolItem", "LottoSchoolItem", new {lottoSchoolItemId = item.LottoSchoolItemId})" data-modal="">
+                                                    <i class="fa fa-edit"></i>
+                                                    Edit
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#" onclick="deleteItem('@item.LottoSchoolItemId')">
+                                                    <i class="fa fa-remove"></i>
+                                                    Delete
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="approveAgent" tabindex="-1" role="dialog" aria-hidden="true">
+    <span id="approveModal"></span>
+</div>
+
+@section scripts {
+    <script>
+            function deleteItem(id) {
+                if (id === "" || parseInt(id) < 1) {
+                    InlineErrorMessage(data.Error ? data.Error : "Invalid Selection!", "dvError");
+                    return false;
+                }
+                if (!confirm("Are you sure you want to delete this Lotto School Item?")) {
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ProcessDeleteRequest", "LottoSchoolItem")',
+                    data: JSON.stringify({ lottoSchoolItemId: id }),
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        if (!data.IsAuthenticated) {
+                            window.location.href = "/Login";
+                            return;
+                        }
+                        if (!data.IsSuccessful) {
+                            InlineErrorMessage(data.Error ? data.Error : "Unknow error occured. Please try again later!",
+                                "dvError");
+                            swal({
+                                    title: "",
+                                    text: data.Error ? data.Error : "Unknow error occured. Please try again later!",
+                                    type: "error",
+                                    showCancelButton: false,
+                                    confirmButtonText: "Close",
+                                    closeOnConfirm: true,
+                                },
+                                function(isConfirm) {
+                                    if (isConfirm) {
+
+                                    }
+                                });
+
+                        } else {
+                            $('#dvModal').modal('hide');
+                            swal({
+                                    title: "",
+                                text: "Lotto School Item was deleted successfully",
+                                    type: "success",
+                                    showCancelButton: false,
+                                    confirmButtonText: "Ok",
+                                    closeOnConfirm: false,
+                                },
+                                function(isConfirm) {
+                                    if (isConfirm) {
+                                        window.location.reload();
+                                    }
+                                });
+                        }
+                    },
+                    complete: function() {
+                        $(".loader").hide();
+                        $("#loadingMessage").html("");
+                    }
+                });
+                return false;
+            }
+    </script>
+}
+

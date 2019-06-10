@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Plug Portal</title>
+
+    @Styles.Render("~/Content/portletBootstrap-css")
+    @Styles.Render("~/Content/portletTable-css")
+    @Styles.Render("~/Content/portletCommon-css")
+    @Styles.Render("~/Content/footer-css")
+   
+  
+
+    @*@Styles.Render("~/Content/dashboard/css/animate.css")
+        @Styles.Render("~/Content/dashboard/css/chartist-plugin-tooltip.css")
+        @Styles.Render("~/Content/dashboard/css/css_colors_default.css")
+        @Styles.Render("~/Content/dashboard/css/css_style.css")
+        @Styles.Render("~/Content/dashboard/css/icon.css")
+        @Styles.Render("~/Content/dashboard/css/dist_chartist.min.css")
+        @Styles.Render("~/Content/dashboard/css/morrisjs_morris.css")
+        @Styles.Render("~/Content/dashboard/css/toast-master_css_jquery.toast.css")*@
+
+</head>
+
+<body class="nav-md">
+    <div class="loader" style="text-align: center;">
+        <div class="text-center" style="margin-top: 15%;">
+            <div class="loading">
+                <div class="sk-fading-circle">
+                    <div class="sk-circle1 sk-circle"></div>
+                    <div class="sk-circle2 sk-circle"></div>
+                    <div class="sk-circle3 sk-circle"></div>
+                    <div class="sk-circle4 sk-circle"></div>
+                    <div class="sk-circle5 sk-circle"></div>
+                    <div class="sk-circle6 sk-circle"></div>
+                    <div class="sk-circle7 sk-circle"></div>
+                    <div class="sk-circle8 sk-circle"></div>
+                    <div class="sk-circle9 sk-circle"></div>
+                    <div class="sk-circle10 sk-circle"></div>
+                    <div class="sk-circle11 sk-circle"></div>
+                    <div class="sk-circle12 sk-circle"></div>
+                </div>
+            </div>
+            <p id="loadingMessage" style="padding-top: 150px;color: #fff;font-size: x-large;"></p>
+        </div>
+    </div>
+    <div class="container body">
+        <div class="main_container">
+
+            @Html.Partial("_NavPartial")
+            <div class="right_col" style="min-height: 540px" role="main">
+                @RenderBody()
+            </div>
+
+        </div>
+    </div>
+    <div class="myf">
+        <div class="bg-texture">
+            <footer>
+                <div class="text-center copyright"> Powered By Plug Portal  © 2009 - @DateTime.Now.Year </div>
+            </footer>
+        </div>
+    </div>
+
+
+    @Scripts.Render("~/bundles/portletJquery-js")
+    @Scripts.Render("~/bundles/portletBootstrap-js")
+    @Scripts.Render("~/bundles/portletCommon-js")
+    @Scripts.Render("~/bundles/portletTable-js")
+    @Scripts.Render("~/bundles/portletJqueryVal-js")
+    @Scripts.Render("~/bundles/portletTools-js")
+    <link href="~/Scripts/Text_Editor/jquery-te-1.4.0.css" rel="stylesheet" />
+    <script src="~/Scripts/Text_Editor/jquery-te-1.4.0.min.js"></script>
+<script src="~/Scripts/main/bootstrap-datepicker.js"></script>
+    <div class="modal fade" id="dvModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div id="modalContent"></div>
+    </div>
+
+    <script>
+        $(function () {
+
+
+          $.ajaxSetup({ cache: false });
+
+            $("a[data-modal]").on("click", function (e) {
+                $(e.target).closest('.btn-group').children('.dropdown-toggle').dropdown('toggle');
+                $('#modalContent').load(this.href, function () {
+                    $('#dvModal').modal('show', {
+                        backdrop: 'static',
+                        keyboard: false,
+                    });
+
+                    bindForm(this);
+                });
+
+                return false;
+            });
+
+
+        });
+
+
+
+        function bindForm(dialog) {
+
+            $('form', dialog).submit(function () {
+                $(this).validate();
+                $.ajax({
+                    url: this.action,
+                    type: this.method,
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        if (result.success) {
+                            $('#dvModal').modal('hide');
+                            swal({
+                                title: "",
+                                text: result.mgs,
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonText: "Ok",
+                                closeOnConfirm: false,
+                            }, function (isConfirm) {
+                                if (isConfirm) {
+
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            $('#modalContent').html(result);
+                            bindForm();
+                        }
+                    }
+                });
+                return false;
+            });
+        }
+    </script>
+
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>
+

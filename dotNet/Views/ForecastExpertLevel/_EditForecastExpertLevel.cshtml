@@ -1,0 +1,132 @@
+﻿@model  LottoGistAdmin.DataAccess.RemoteModel.ForecastExpertLevelItemObj
+@{
+    Layout = null;
+    var error = ViewBag.Error as string;
+    var hasError = !string.IsNullOrEmpty(error);
+}
+
+<div class="modal-dialog">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2><b>MODIFY EXPERT LEVEL</b></h2>
+        </div>
+
+        <div class="panel-body">
+            @if (hasError)
+            {
+                <div class="bs-callout bs-callout-danger" id="customError">
+                    <h4>Error!</h4>
+                    <p>@Html.Raw(error)</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+            else
+            {
+                using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmEditForecastExpertLevel", data_parsley_validate = "" }))
+                {
+                    @Html.Hidden("ForecastExpertLevelId", Model.ForecastExpertLevelId)
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div id="dvError"></div>
+                        <div class="form-group">
+                            <b>REQUIRED POINTS</b>
+                            <input type="number" -webkit-appearance="none" margin="0" class="form-control input-sm" value="@Model.RequiredPoints" id="RequiredPoints" name="RequiredPoints" required="" data-parsley-required-message="Please enter required points!">
+                        </div>
+                        <div class="form-group">
+                            <b>NAME</b>
+                            <input type="text" class="form-control " value="@Model.Name" id="Name" name="Name" required="" data-parsley-required-message="Blog Category Name is required">
+                        </div>
+                        <div class="form-group">
+                            <b>STATUS</b>
+                            @Html.CheckBox("StatusVal", Model.StatusVal, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="fa fa-remove"></i> Close</button>
+                            <button type="submit" class="btn btn-success" id="btnUpdate"> <i class="fa fa-check"></i> Update</button>
+                        </div>
+                    </div>
+                }
+
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#frmEditForecastExpertLevel').parsley().on('field:validated', function() {
+            var ok = $('.parsley-error').length === 0;
+            $('.bs-callout-info').toggleClass('hidden', !ok);
+            $('.bs-callout-danger').toggleClass('hidden', ok);
+        }).on('form:submit', function () {
+            ClearInlineError("dvError");
+
+            var frm = $("#frmEditForecastExpertLevel");
+
+            if (!frm.valid()) {
+                InlineErrorMessage("Validation Error! Please check all fields", "dvError");
+                return false;
+            }
+            var param = frm.serializeArray();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ProcessUpdateRequest", "ForecastExpertLevel")',
+                data: param,
+                success: function (data) {
+                    if (!data.IsAuthenticated) {
+                        window.location.href = "/Login";
+                        return;
+                    }
+                    if (!data.IsSuccessful) {
+                        InlineErrorMessage(data.Error ? data.Error : "Unknow error occured. Please try again later!", "dvError");
+                       swal({
+                            title: "",
+                            text: data.Error ? data.Error : "Unknow error occured. Please try again later!",
+                            type: "error",
+                            showCancelButton: false,
+                            confirmButtonText: "Close",
+                            closeOnConfirm: true,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+
+                            }
+                        });
+
+                    } else {
+                        $('#dvModal').modal('hide');
+                        swal({
+                            title: "",
+                            text: "Forecast Expert Level was modified successfully",
+                            type: "success",
+                            showCancelButton: false,
+                            confirmButtonText: "Ok",
+                            closeOnConfirm: false,
+                        }, function (isConfirm) {
+
+                            if (isConfirm) {
+                               window.location.reload();
+                            }
+                        });
+                    }
+                },
+                complete: function () {
+
+                    $(".loader").hide();
+                    $("#loadingMessage").html("");
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+

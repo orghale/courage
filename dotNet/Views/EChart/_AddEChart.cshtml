@@ -1,0 +1,398 @@
+﻿
+@model  LottoGistAdmin.DataAccess.RemoteModel.EChartItemObj
+@{
+    /**/
+
+    Layout = null;
+    var error = ViewBag.Error as string;
+    var hasError = !string.IsNullOrEmpty(error);
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2> NEW ECHART</h2>
+        </div>
+
+        <div class="panel-body">
+            @if (hasError)
+            {
+                <div class="bs-callout bs-callout-danger" id="customError">
+                    <h4>Error!</h4>
+                    <p>@Html.Raw(error)</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+            else
+            {
+                using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmAddEChart", data_parsley_validate = "" }))
+                {
+
+                    <div id="dvError"></div>
+                    <div class="row">
+
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                DATE
+                                <div class="input-group date chartDatePicker" id='ChartDate' data-date-format="dd/mm/yyyy">
+                                    @Html.TextBoxFor(model => model.ChartDate, new { @id = "selectedChartDate", @class = "form-control" })
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                SCHEDULE
+                                @Html.DropDownListFor(x => x.GameScheduleId, new SelectList(Model.AllGameSchedules, "Id", "Name", Model.GameScheduleId), "-- Please select --", new { @id = "gameScheduleId", @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                OPERATOR
+                                @Html.DropDownListFor(x => x.OperatorId, new SelectList(Model.AllOperators, "Id", "Name", Model.OperatorId), "-- Please select --", new { @id = "operatorId", @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                GAME
+                                @Html.DropDownListFor(x => x.GameId, new SelectList(Model.AllGames, "Id", "Name", Model.GameId), "-- Please select --", new { @id = "gameId", @class = "form-control" })
+                            </div>
+                            TITLE
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <input type="text" class="form-control " value="@Model.Title" id="ChartTitle" name="Title" required="" data-parsley-required-message="Chart Title is required">
+                                </div>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="col-md-2">
+                                    BANKER
+                                    <div class="form-group">
+                                        <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.BankerValue" id="BankerValue" name="BankerValue" required="" data-parsley-required-message="Btw (01 & 90)">
+                                    </div>
+                                    
+                                    BANKER
+                                    <div class="row">
+                                        <div class="form-group col-md-2">
+                                            <input type="text" size="2" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.BankerValue" id="BankerValue" name="BankerValue" required="" data-parsley-required-message="Btw (01 & 90)">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    
+                                    <div class="row">
+                                        TWO SURE
+                                        <div class="form-group">
+                                            <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.TwoSureValueA" id="TwoSureValueA" name="TwoSureValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.TwoSureValueB" id="TwoSureValueB" name="TwoSureValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                   
+                                <div class="col-md-2">
+                                    THREE DIRECT
+                                    <div class="form-group">
+                                        <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.ThreeDirectValueA" id="ThreeDirectValueA" name="ThreeDirectValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                    </div>
+                                    <div class="form-group">
+
+                                        <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.ThreeDirectValueB" id="ThreeDirectValueB" name="ThreeDirectValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                    </div>
+                                    <div class="form-group">
+
+                                        <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.ThreeDirectValueC" id="ThreeDirectValueC" name="ThreeDirectValueC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                    </div>
+                                </div>
+
+                                </div>
+
+                            <div class="form-group">
+                                STATUS
+                                @Html.CheckBox("StatusVal", Model.StatusVal, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            PERM
+                            <div class="row">
+                                <B></B>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueA" id="PermValueA" name="PermValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueB" id="PermValueB" name="PermValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueC" id="PermValueC" name="PermValueC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueD" id="PermValueD" name="PermValueD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueE" id="PermValueE" name="PermValueE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            POSITIVE ONES
+                            <div class="row">
+
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueA" id="PositiveOnesValueA" name="PositiveOnesValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueB" id="PositiveOnesValueB" name="PositiveOnesValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueC" id="PositiveOnesValueC" name="PositiveOnesValueC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueD" id="PositiveOnesValueD" name="PositiveOnesValueD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueE" id="PositiveOnesValueE" name="PositiveOnesValueE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            SUPER FIVE
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueA" id="SuperFiveValueA" name="SuperFiveValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueB" id="SuperFiveValueB" name="SuperFiveValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueC" id="SuperFiveValueC" name="SuperFiveValueC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueD" id="SuperFiveValueD" name="SuperFiveValueD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueE" id="SuperFiveValueE" name="SuperFiveValueE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+                            <div class="form-group">
+
+                            </div>
+                            <div class="form-group">
+                                LATEST RESULTS
+                            </div>
+                            SUCCESS
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultA" id="LastSuccessResultA" name="LastSuccessResultA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultB" id="LastSuccessResultB" name="LastSuccessResultB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultC" id="LastSuccessResultC" name="LastSuccessResultC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultD" id="LastSuccessResultD" name="LastSuccessResultD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultE" id="LastSuccessResultE" name="LastSuccessResultE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            MACHINE
+                            <div class="row">
+
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultA" id="LastMachineResultA" name="LastMachineResultA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultB" id="LastMachineResultB" name="LastMachineResultB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultC" id="LastMachineResultC" name="LastMachineResultC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultD" id="LastMachineResultD" name="LastMachineResultD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultE" id="LastMachineResultE" name="LastMachineResultE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+                            MESSAGE
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <textarea rows="2" style="resize:vertical" class="form-control" id="Message" name="Message" required="" data-parsley-required-message="Please check Chart Message">@Model.Message</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="fa fa-remove"></i> Close</button>
+                        <button type="submit" class="btn btn-success" id="btnUpdate"> <i class="fa fa-check"></i> Add</button>
+                    </div>
+
+                }
+
+            }
+
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.chartDatePicker').datepicker({
+            calendarWeeks: true,
+            todayHighlight: true,
+            autoclose: true
+        });
+
+        $('#operatorId').change(function () {
+
+            $('#gameId').empty();
+            $('#gameScheduleId').empty();
+
+          if ($('#operatorId').val() != null ) {
+
+               $.ajax({
+                    type: "POST",
+                   url: "/EChart/GetGamesByOperatorId",
+                    data: JSON.stringify({ operatorId: $('#operatorId').val()}),
+                    contentType: "application/json; charset=utf-8",
+
+                    success: function (data) {
+                        $('#gameId').append('<option value="">--Please select--</option>');
+                        $.each(data.Games, function (index, value) {
+                            $('#gameId').append('<option value="'+ value.Id+'">'+ value.Name+'</option>');
+                        });
+                    }
+                });
+            }
+        });
+
+        $('#gameId').change(function () {
+
+            $('#gameScheduleId').empty();
+
+
+            if ($('#selectedChartDate').val() != null && $('#operatorId').val() != null && $('#gameId').val() != null) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "/EChart/GetGameSchedulesByOperatorId",
+                    data: JSON.stringify({ operatorId: $('#operatorId').val(), gameId: $('#gameId').val(), chartDateStr: $('#selectedChartDate').val()}),
+                    contentType: "application/json; charset=utf-8",
+
+                    success: function (data) {
+                        $('#gameScheduleId').append('<option value="">--Please select--</option>');
+                        $.each(data.GameSchedules, function (index, value) {
+                            $('#gameScheduleId').append('<option value="'+ value.Id+'">'+ value.Name+'</option>');
+                        });
+                    }
+                });
+            }
+        });
+
+        $('#selectedChartDate').datepicker().on('changeDate', function (ev) {
+           $('#gameScheduleId').empty();
+
+            if ($('#selectedChartDate').val() != null && $('#operatorId').val() != null && $('#gameId').val() != null) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "/EChart/GetGameSchedulesByOperatorId",
+                    data: JSON.stringify({ operatorId: $('#operatorId').val(), gameId: $('#gameId').val(), chartDateStr: $('#selectedChartDate').val()}),
+                    contentType: "application/json; charset=utf-8",
+
+                    success: function (data) {
+                        $('#gameScheduleId').append('<option value="">--Please select--</option>');
+                        $.each(data.GameSchedules, function (index, value) {
+                            $('#gameScheduleId').append('<option value="'+ value.Id+'">'+ value.Name+'</option>');
+                        });
+                    }
+                });
+            }
+
+        });
+      $('#frmAddEChart').parsley().on('field:validated', function() {
+            var ok = $('.parsley-error').length === 0;
+            $('.bs-callout-info').toggleClass('hidden', !ok);
+            $('.bs-callout-danger').toggleClass('hidden', ok);
+        }).on('form:submit', function () {
+            ClearInlineError("dvError");
+
+            if ($('#operatorId').val() === null || $('#operatorId').val() === "" || parseInt($('#operatorId').val()) === 0 ) {
+
+                InlineErrorMessage("Please select an Operator!", "dvError");
+                return false;
+            }
+
+            if ($('#gameId').val() === null || $('#gameId').val() === "" || parseInt($('#gameId').val()) === 0) {
+
+                InlineErrorMessage("Please select a Game!", "dvError");
+                return false;
+            }
+
+            if ($('#gameScheduleId').val() === null || $('#gameScheduleId').val() === "" || parseInt($('#gameScheduleId').val()) === 0) {
+
+                InlineErrorMessage("Please select a Game Schedule!", "dvError");
+                return false;
+            }
+
+            var frm = $("#frmAddEChart");
+
+           if (!frm.valid()) {
+                InlineErrorMessage("Validation Error! Please check all fields", "dvError");
+                return false;
+            }
+            var param = frm.serializeArray();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ProcessAddRequest", "EChart")',
+                    data: param,
+
+                success: function (data) {
+                    if (!data.IsAuthenticated) {
+                        window.location.href = "/Login";
+                        return;
+                    }
+                    if (!data.IsSuccessful) {
+                        InlineErrorMessage(data.Error ? data.Error : "Unknow error occured. Please try again later!", "dvError");
+                       swal({
+                            title: "",
+                            text: data.Error ? data.Error : "Unknow error occured. Please try again later!",
+                            type: "error",
+                            showCancelButton: false,
+                            confirmButtonText: "Close",
+                            closeOnConfirm: true,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                            }
+                        });
+
+                    } else {
+                        $('#dvModal').modal('hide');
+                        swal({
+                            title: "",
+                            text: "Chart was added successfully",
+                            type: "success",
+                            showCancelButton: false,
+                            confirmButtonText: "Ok",
+                            closeOnConfirm: false,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                               window.location.reload();
+                            }
+                        });
+                    }
+                },
+                complete: function () {
+                    $(".loader").hide();
+                    $("#loadingMessage").html("");
+                }
+            });
+            return false;
+        });
+    });
+</script>

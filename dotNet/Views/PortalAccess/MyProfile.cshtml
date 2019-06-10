@@ -1,0 +1,141 @@
+﻿@using XPLUG.WEBTOOLKIT
+@model  PPFrameworkManager.PortalObjs.UserItemObj
+
+@{
+    ViewBag.Title = "MyProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+
+        <!------CONTROL TABS START------>
+        <ul class="nav nav-tabs bordered">
+            <li class="active">
+                <a href="#list" data-toggle="tab">
+                    <i class="fa fa-list"></i>
+                    Modify User Information
+                </a>
+            </li>
+
+        </ul>
+        <!------CONTROL TABS END------>
+
+        <div class="tab-content" style="min-height: 400px; background-color: #fff">
+            @{
+                var errorMessage = ViewBag.Error as string;
+                var successMessage = ViewBag.Reply as string;
+                var ret = ViewBag.UpdateSucceed as string;
+                if (!string.IsNullOrEmpty(errorMessage) && errorMessage.Length > 1)
+                {
+                    <div class="bs-callout bs-callout-danger ">
+                        <h4>Error!</h4>
+                        <p>@Html.Raw(errorMessage)</p>
+                    </div>
+                }
+                if (!string.IsNullOrEmpty(successMessage) && successMessage.Length > 1)
+                {
+                    <div class="bs-callout bs-callout-success ">
+                        <h4>Sucess!</h4>
+                        <p>@Html.Raw(successMessage)</p>
+                    </div>
+                }
+                if (!string.IsNullOrEmpty(ret))
+                {
+                    if (ret.IsNumeric())
+                    {
+                        if (int.Parse(ret) == 1)
+                        {
+                            <div class="bs-callout bs-callout-success ">
+                                <h4>Success!</h4>
+                                <p>Your Profile Was Updated Successfully</p>
+                            </div>
+                        }
+                    }
+                }
+            }
+
+            <div class="tab-pane box active" id="list">
+
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "profile", data_parsley_validate = "" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    @Html.HiddenFor(model => model.Username)
+                    @Html.HiddenFor(model => model.Email)
+                    @Html.HiddenFor(model => model.UserId)
+                    @Html.Hidden("Password", "Password$")
+                    @Html.Hidden("ConfirmPassword", "Password$")
+                    <div class="bs-callout bs-callout-danger hidden">
+                        <h4>Opps!</h4>
+                        <p>Please fill all required fields</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5 col-sm-5 col-xs-12 form-group has-feedback">
+                            <label>Full Name</label>
+                            <input type="text" class="form-control has-feedback-left" value="@Model.Fullname" id="Fullname" name="Fullname" required="" placeholder="LastName" data-parsley-required-message="Please enter your full name">
+                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                        <div class="col-md-5 col-sm-5 col-xs-12 form-group has-feedback">
+                            <label>Email</label>
+                            <input type="text" class="form-control has-feedback-left" readonly="readonly" value="@Model.Email" id="Email" name="Email" required="" placeholder="Email" data-parsley-required-message="Please enter your Email">
+                            <span class="fa fa-mail-forward form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                   <div class="row">
+                        
+                        <div class="col-md-5 col-sm-5 col-xs-12 form-group has-feedback">
+                            <label>Username</label>
+                            <input type="text" class="form-control has-feedback-left" readonly="readonly" value="@Model.Username" id="UserName" name="UserName" required="" placeholder="UserName" data-parsley-required-message="Please enter your UserName">
+                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 col-sm-10 col-xs-12 form-group has-feedback">
+                            <label>My Role(s)</label>
+                            @Html.DisplayFor(model => model.Roles)
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 col-sm-5 col-xs-12 form-group center-div">
+
+                            <div style="margin-top: 10px">
+                                <button type="submit" class="btn btn-primary" style="width: 100%">
+                                    Update Profile
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function(e) {
+            $('#profile').parsley().on('field:validated', function() {
+                var ok = $('.parsley-error').length === 0;
+                $('.bs-callout-danger').toggleClass('hidden', ok);
+                $('#customError').hide();
+            });
+
+        });
+
+    </script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.validate.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+
+}
+
+
+

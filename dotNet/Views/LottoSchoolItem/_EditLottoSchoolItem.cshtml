@@ -1,0 +1,216 @@
+﻿
+@model  LottoGistAdmin.DataAccess.RemoteModel.LottoSchoolItemObj
+@{
+
+    Layout = null;
+    var error = ViewBag.Error as string;
+    var hasError = !string.IsNullOrEmpty(error);
+}
+
+<div class="modal-dialog">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2><b>MODIFY SCHOOL ITEM</b></h2>
+        </div>
+
+        <div class="panel-body">
+            @if (hasError)
+            {
+                <div class="bs-callout bs-callout-danger" id="customError">
+                    <h4>Error!</h4>
+                    <p>@Html.Raw(error)</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+            else
+            {
+                using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmEditLottoSchoolItem", data_parsley_validate = "" }))
+                {
+                    @Html.Hidden("LottoSchoolItemId", Model.LottoSchoolItemId)
+                    @Html.Hidden("FeaturedImagePath", Model.FeaturedImagePath)
+                    <div id="dvError"></div>
+                    <div class="row">
+                        <div class="form-group  col-md-6">
+                            <b>TOPIC</b>
+                            @Html.DropDownListFor(x => x.LottoSchoolTopicId, new SelectList(Model.AllLottoSchoolTopics, "Id", "Name", Model.LottoSchoolTopicId), "-- Please select --", new { @id = "lottoSchoolTopicId", @class = "form-control" })
+                        </div>
+                        <div class="form-group  col-md-6">
+                            <b>CATEGORY</b>
+                            @Html.DropDownListFor(x => x.LottoSchoolCategoryId, new SelectList(Model.LottoSchoolCategories, "Id", "Name", Model.LottoSchoolCategoryId), "-- Please select --", new { @id = "lottoSchoolCategoryId", @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <b>TITLE</b>
+                        <input type="text" class="form-control" value="@Model.Title" id="Title" name="Title" required="" data-parsley-required-message="Title is required">
+                    </div>
+                    <div class="form-group">
+                        <b>ITEM CONTENT</b>
+                        <textarea rows="3" style="resize:vertical" class="form-control editor" id="ItemContent" name="ItemContent" required="" data-parsley-required-message="Post Content is required">@Model.ItemContent</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <b>TAGS</b>
+                            <input type="text" class="form-control" value="@Model.Tags" id="Tags" name="Tags" required="" data-parsley-required-message="Tag is required">
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group col-md-3">
+                                <b>IMAGE PATH</b>
+                                <input type="file" class="form-control" id="imageInput" name="imageInput">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <img src="" id="imagePreview" alt="Image" width="100" height="100" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div><b>PUBLISHED</b>
+                            @Html.CheckBox("PublishStatusVal", Model.PublishStatusVal, new {htmlAttributes = new {@id = "PublishStatusVal", @class = "form-control"}})
+                        </div>
+                    </div>
+                    @*<div class="form-group col-md-3 pull-right">
+                    <b>STATUS</b>
+                    @Html.CheckBox("StatusVal", Model.StatusVal, new { htmlAttributes = new { @id = "StatusVal", @class = "form-control" } })
+                </div>*@
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="fa fa-remove"></i> Close</button>
+                            <button type="submit" class="btn btn-success" id="btnUpdate"> <i class="fa fa-check"></i> Update</button>
+                        </div>
+                    </div>
+
+                }
+
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $(".editor").jqte({ format: false });
+
+        $("#imagePreview").hide();
+
+        $('#frmEditLottoSchoolItem').parsley().on('field:validated', function() {
+            var ok = $('.parsley-error').length === 0;
+            $('.bs-callout-info').toggleClass('hidden', !ok);
+            $('.bs-callout-danger').toggleClass('hidden', ok);
+        }).on('form:submit', function () {
+            ClearInlineError("dvError");
+
+            if ($('#LottoSchoolTopicId').val() === null || $('#LottoSchoolTopicId').val() === "" || parseInt($('#LottoSchoolTopicId').val()) === 0) {
+
+                InlineErrorMessage("Please select a Lotto School Topic!", "dvError");
+                return false;
+            }
+
+            if ($('#LottoSchoolCategoryId').val() === null || $('#LottoSchoolCategoryId').val() === "" || parseInt($('#LottoSchoolCategoryId').val()) === 0) {
+
+                InlineErrorMessage("Please select a Lotto School Topic!", "dvError");
+                return false;
+            }
+
+            var frm = $("#frmEditLottoSchoolItem");
+            if (!frm.valid()) {
+                InlineErrorMessage("Validation Error! Please check all fields", "dvError");
+                return false;
+            }
+
+            var params = {
+                LottoSchoolItemId: @Model.LottoSchoolItemId,
+                LottoSchoolTopicId: $('#lottoSchoolTopicId').val(),
+                LottoSchoolCategoryId: $('#lottoSchoolCategoryId').val(),
+                Title: $('#Title').val(),
+                ItemContent: $('#ItemContent').val(),
+                Tags: $('#Tags').val(),
+                PublishStatusVal: $('#PublishStatusVal').val(),
+                FeaturedImagePath: $('#FeaturedImagePath').val()
+            }
+
+            var dataModel = JSON.stringify(params);
+            var formData = new FormData();
+
+            var files = $("#imageInput").get(0).files;
+            if (files.length > 0) {
+                formData.append("fileUpload", files[0]);
+            }
+            formData.append("model", dataModel);
+         
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ProcessUpdateRequest", "LottoSchoolItem")',
+                dataType: "JSON",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (data) {
+                    if (!data.IsAuthenticated) {
+                        window.location.href = "/Login";
+                        return;
+                    }
+                    if (!data.IsSuccessful) {
+                        InlineErrorMessage(data.Error ? data.Error : "Unknow error occured. Please try again later!", "dvError");
+                       swal({
+                            title: "",
+                            text: data.Error ? data.Error : "Unknow error occured. Please try again later!",
+                            type: "error",
+                            showCancelButton: false,
+                            confirmButtonText: "Close",
+                            closeOnConfirm: true,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+
+                            }
+                        });
+
+                    } else {
+                        $('#dvModal').modal('hide');
+                        swal({
+                            title: "",
+                            text: "Lotto School Item modified successfully",
+                            type: "success",
+                            showCancelButton: false,
+                            confirmButtonText: "Ok",
+                            closeOnConfirm: false,
+                        }, function (isConfirm) {
+                           if (isConfirm) {
+                               window.location.reload();
+                            }
+                        });
+                    }
+                },
+                complete: function () {
+                    $(".loader").hide();
+                    $("#loadingMessage").html("");
+                }
+            });
+            return false;
+        });
+
+        function readURL(input) {
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#imagePreview').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imageInput").change(function () {
+            $("#imagePreview").show();
+            readURL(this);
+        });
+
+    });
+
+
+</script>

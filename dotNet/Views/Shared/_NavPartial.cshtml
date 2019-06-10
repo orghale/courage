@@ -1,0 +1,155 @@
+﻿@using LottoGistAdmin.Models.Portal
+@{
+    var userData = MvcApplication.GetUserData(User.Identity.Name) ?? new UserData();
+    var tabs = MvcApplication.GetPortalTabData(User.Identity.Name);
+    var userRoleList = userData.Roles.ToList();
+}
+<div style="min-height:100%" class="col-md-3 minheight  shadowb left_col">
+    <div class="left_col scroll-view">
+
+        <div class="navbar nav_title" style="border: 0;">
+            <a id="logoa" href="" class="site_title text-center"><img style="width: 200px; margin: 15px auto" src="~/Images/logo.png"></a>
+            <a id="logob" href="" class="site_title text-center hidden"><img style="width: 80px; margin: 15px auto" src="~/Images/logo.png"></a>
+        </div>
+        <div class="clearfix"></div>
+
+
+
+        <!-- sidebar menu -->
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+            <div class="menu_section">
+                @{
+                    if (tabs != null && tabs.Any())
+                    {
+                        var allTabs = tabs.OrderBy(m => m.TabOrder).ToList();
+                        var tabItemsList = allTabs.GroupBy(e => e.TabParentId, (key, g) => new
+                        {
+                            TabId = key,
+                            TabItems = g.ToList()
+                        }).ToList();
+
+                        var parentTabList = allTabs.FindAll(m => m.TabParentId == 0);
+                        //stakedMainNo.Where(winList.Contains).ToList();
+                        if (parentTabList.Any())
+                        {
+                            <ul class="nav side-menu">
+                                @foreach (var tabItemObj in parentTabList)
+                                {
+                                    //Confirm access to parent tab
+                                    var tabRoleList = tabItemObj.Roles.Split(new[] {',', ';'}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                    var results = tabRoleList.Where(userRoleList.Contains).ToList();
+                                    if (!results.Any())
+                                    {
+                                        continue;
+                                    }
+                                    var thisItems = tabItemsList.Find(p => p.TabId == tabItemObj.TabId);
+                                    if (thisItems == null)
+                                    {
+                                        var tabSplit = tabItemObj.ContentUrl.Split(new[] {'|'}, StringSplitOptions.None);
+                                        if (!tabSplit.Any() || tabSplit.Length != 3)
+                                        {
+                                            <li>
+                                                <a href="#">@tabItemObj.Title</a>
+                                            </li>
+                                            continue;
+
+                                        }
+                                        var areaUrl = string.IsNullOrEmpty(tabSplit[2]) ? "" : tabSplit[2];
+                                        <li>
+                                            <a href="@Url.Action(tabSplit[0], tabSplit[1], new {Area = areaUrl})"><i class="@tabItemObj.LeftPanelUrl"></i> @tabItemObj.Title</a>
+                                        </li>
+                                        continue;
+                                    }
+                                    if (thisItems.TabId > 0 && thisItems.TabItems.Any())
+                                    {
+                                        var thisTabList = thisItems.TabItems.OrderBy(m => m.TabOrder);
+                                        <li>
+                                            <a><i class="@tabItemObj.LeftPanelUrl"></i> @tabItemObj.Title <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                @foreach (var tabItem in thisTabList)
+                                                {
+                                                    //Confirm access to child tab
+                                                    var childTabRoleList = tabItem.Roles.Split(new[] {',', ';'}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                                    var results2 = childTabRoleList.Where(userRoleList.Contains).ToList();
+                                                    if (!results2.Any())
+                                                    {
+                                                        continue;
+                                                    }
+
+                                                    var tabSplit = tabItem.ContentUrl.Split(new[] {'|'}, StringSplitOptions.None);
+                                                    if (!tabSplit.Any() || tabSplit.Length != 3)
+                                                    {
+                                                        continue;
+
+                                                    }
+                                                    var areaUrl = string.IsNullOrEmpty(tabSplit[2]) ? "" : tabSplit[2];
+                                                    <li>
+                                                        <a href="@Url.Action(tabSplit[0], tabSplit[1], new {Area = areaUrl})" @(tabItem.TabType > 1? "data-modal=NONE" : "" )><i class="@tabItem.LeftPanelUrl"></i> @tabItem.Title</a>
+                                                    </li>
+
+                                                }
+                                            </ul>
+                                        </li>
+                                    }
+
+                                }
+                            </ul>
+                        }
+
+                    }
+                }
+
+                
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+<!-- top navigation -->
+<div class="top_nav">
+
+    <div class="nav_menu">
+        <nav class="" role="navigation">
+            <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+            </div>
+
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                    <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <img src="~/images/img.jpg" alt="">@userData.Username
+                        <span class=" fa fa-angle-down"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-usermenu pull-right">
+                        @*<li>
+                            <a href="@Url.Action("MyProfile", "PortalAccess", new { Area = "" })">  Profile</a>
+                        </li>*@
+                        <li>
+                            <a href="@Url.Action("_ChangeUserPassword", "PortalAccess")" data-modal="">  Change Password</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;">Help</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("", "SignOut", new { Area = "" })" title="Logout">Log Out</a>
+                        </li>
+                    </ul>
+                </li>
+                <li role="presentation">
+                    <a href="#" target="new" class="" style="background-color: transparent; color: white; font-weight:900" aria-expanded="false">
+                        <i class="fa fa-desktop"></i>
+                        &nbsp;External Monitor
+                    </a>
+
+                </li>
+
+
+            </ul>
+        </nav>
+    </div>
+    <div class="clearfix"></div>
+</div>

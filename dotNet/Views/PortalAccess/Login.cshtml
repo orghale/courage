@@ -1,0 +1,94 @@
+﻿@model  LottoGistAdmin.Models.Portal.UserLoginContract
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> Admin Login </title>
+    <!-- Bootstrap -->
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <!-- Font Awesome -->
+    <link href="@Url.Content("~/Content/font-awesome.min.css")" rel="stylesheet" type="text/css" />
+    <!-- Custom Theme Style -->
+    <link href="@Url.Content("~/Content/main/custom.css")" rel="stylesheet" type="text/css" />
+</head>
+
+<body style="background:#f4f4ef;">
+    <div class="">
+        <a class="hiddenanchor" id="toregister"></a>
+        <a class="hiddenanchor" id="tologin"></a>
+
+        <div id="wrapper">
+            <div class="col-lg-4 col-md-4 col-sm-3 col-xs-12"></div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="margin: 8% auto;">
+
+                <div id="login" class="reg-block">
+                    <section class="login_content">
+                        <div class="logo">
+                            <img class="imglgin" src="~/Images/logo.png">
+                        </div>
+
+                        <div>
+                            <h2 class="text-center hidden" style="color: #0f592b ; font-size: 25px">LOGIN</h2>
+                        </div>
+
+                        @using (Html.BeginForm())
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="row no-margin">
+                                <div class="col-md-12 col-sm-12 col-xs-12 form-group20 has-feedback">
+
+                                    <input type="text" class="form-control has-feedback-left datepicker" id="UserName" name="UserName" required="" placeholder="Username">
+                                    <span style="top: 7px;" class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                    <span style="color:Red; text-align:left;"> @Html.ValidationMessageFor(model => model.Username)</span>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-xs-12 form-group20 has-feedback">
+
+                                    <input type="password" class="form-control has-feedback-left datepicker" id="Password" name="Password" required="" placeholder="Password">
+                                    <span style="top: 7px;" class="fa fa-key form-control-feedback left" aria-hidden="true"></span>
+                                    <span style="color:Red; text-align:left;"> @Html.ValidationMessageFor(model => model.Password)</span>
+                                </div>
+
+                                <div class="col-md-12 col-sm-12  col-xs-12 form-group has-feedback">
+                                    <br /> <div class="form-group">
+                                        <span style="color:Red; text-align:left;">@Html.ValidationSummary(true)</span>
+
+                                        <input type="submit" value="Sign In" name="Login" class="btn btn-success btn-block" style="margin: 0 !important;" />
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                        }
+
+
+
+                    </section>
+                </div>
+
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-3 col-xs-12"></div>
+
+
+        </div>
+      </div>
+
+
+
+    <div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryval")
+    </div>
+</body>
+</html>

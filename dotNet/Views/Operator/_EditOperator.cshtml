@@ -1,0 +1,145 @@
+﻿
+@model  LottoGistAdmin.DataAccess.RemoteModel.OperatorItemObj
+@{
+    Layout = null;
+    var error = ViewBag.Error as string;
+    var hasError = !string.IsNullOrEmpty(error);
+}
+
+<div class="modal-dialog">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2> <b>MODIFY OPERATOR</b></h2>
+        </div>
+
+
+        <div class="panel-body">
+            @if (hasError)
+            {
+                <div class="bs-callout bs-callout-danger" id="customError">
+                    <h4>Error!</h4>
+                    <p>@Html.Raw(error)</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+            else
+            {
+                using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmEditOperator", data_parsley_validate = "" }))
+                {
+                    @Html.Hidden("txtOperatorId", Model.OperatorId)
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div id="dvError"></div>
+                        <div class="form-group">
+                            <b>NAME</b>NAME
+                            <input type="text" class="form-control " value="@Model.Name" id="txtName" name="txtName" required="" data-parsley-required-message="Operator's Name is required">
+                        </div>
+                        <div class="form-group">
+                            <b>SHORT NAME</b>
+                            <input type="text" class="form-control " value="@Model.ShortName" id="txtShortName" name="txtShortName" required="" data-parsley-required-message="Operator's Short-Name is required">
+                        </div>
+                        <div class="form-group">
+                            <b>STATUS</b>
+                            <input type="checkbox" @(Model.StatusVal ? "checked=\"checked\"" : "") id="chkStatus">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="fa fa-remove"></i> Close</button>
+                            <button type="submit" class="btn btn-success" id="btnUpdate"> <i class="fa fa-check"></i> Add</button>
+                        </div>
+                    </div>
+                }
+
+            }
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#frmEditOperator').parsley().on('field:validated', function() {
+            var ok = $('.parsley-error').length === 0;
+            $('.bs-callout-info').toggleClass('hidden', !ok);
+            $('.bs-callout-danger').toggleClass('hidden', ok);
+        }).on('form:submit', function () {
+            ClearInlineError("dvError");
+
+            var roleId = $("#txtOperatorId").val();
+            var roleName = $("#txtName").val();
+            var shortName = $("#txtShortName").val();
+            var chkStatus = $("#chkStatus").is(':checked');
+
+            if (roleId == null || roleId === "" || parseInt(roleId) < 1) {
+                InlineErrorMessage("Invalid Operator Selection", "dvError");
+                return false;
+            }
+
+            if (roleName == null || roleName === "" || roleName.length < 2) {
+                InlineErrorMessage("Operator Name must be at least 2 characters", "dvError");
+                return false;
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ProcessUpdateRequest", "Operator")',
+                data: JSON.stringify({ myId: roleId, myName: roleName, myShortName: shortName, myStatus: chkStatus }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (!data.IsAuthenticated) {
+                        window.location.href = "/Login";
+                        return;
+                    }
+                    if (!data.IsSuccessful) {
+                        InlineErrorMessage(data.Error ? data.Error : "Unknow error occured. Please try again later!", "dvError");
+                       swal({
+                            title: "",
+                            text: data.Error ? data.Error : "Unknow error occured. Please try again later!",
+                            type: "error",
+                            showCancelButton: false,
+                            confirmButtonText: "Close",
+                            closeOnConfirm: true,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+
+                            }
+                        });
+
+                    } else {
+                        $('#dvModal').modal('hide');
+                        swal({
+                            title: "",
+                            text: "Operator was modified successfully",
+                            type: "success",
+                            showCancelButton: false,
+                            confirmButtonText: "Ok",
+                            closeOnConfirm: false,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                               window.location.reload();
+                            }
+                        });
+                    }
+                },
+                complete: function () {
+                    $(".loader").hide();
+                    $("#loadingMessage").html("");
+                }
+            });
+            return false;
+        });
+
+
+
+    });
+
+
+</script>
+
+
+
+
+
+
+
+

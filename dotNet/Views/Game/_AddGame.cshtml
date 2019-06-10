@@ -1,0 +1,152 @@
+﻿
+@model  LottoGistAdmin.DataAccess.RemoteModel.GameItemObj
+@{
+    Layout = null;
+    var error = ViewBag.Error as string;
+    var hasError = !string.IsNullOrEmpty(error);
+}
+
+<div class="modal-dialog">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2><b> NEW GAME</b> </h2>
+        </div>
+
+        <div class="panel-body">
+            @if (hasError)
+            {
+                <div class="bs-callout bs-callout-danger" id="customError">
+                    <h4>Error!</h4>
+                    <p>@Html.Raw(error)</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+            else
+            {
+                using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmAddGame", data_parsley_validate = "" }))
+                {
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div id="dvError"></div>
+
+                    <div class="form-group">
+                        <b>NAME</b>
+                        <input type="text" class="form-control " value="@Model.Name" id="Name" name="Name" required="" data-parsley-required-message="Game Name is required">
+                    </div>
+
+                    <div class="form-group">
+                        <b>SHORT NAME</b>
+                        <input type="text" class="form-control " value="@Model.ShortName" id="ShortName" name="ShortName" required="" data-parsley-required-message="Game Short-Name is required">
+                    </div>
+                    <div class="form-group">
+                        <b>OPERATOR</b>
+                        @Html.DropDownListFor(x => x.OperatorId, new SelectList(Model.AllOperators, "Id", "Name", Model.OperatorId), "-- Please select --", new {@id = "operatorId",  @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <b>GAME TYPE</b>
+                        @Html.DropDownListFor(x => x.GameTypeId, new SelectList(Model.AllGameTypes, "Id", "Name", Model.GameTypeId), "-- Please select --", new { @id = "gameTypeId",  @class = "form-control" })
+                    </div>
+
+                    <div class="form-group">
+                        <b>STATUS</b>
+                        @Html.CheckBox("StatusVal", Model.StatusVal, new { htmlAttributes = new { @class = "form-control" } })
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="fa fa-remove"></i> Close</button>
+                        <button type="submit" class="btn btn-success" id="btnUpdate"> <i class="fa fa-check"></i> Add</button>
+                    </div>
+                </div>
+                }
+            }
+
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#frmAddGame').parsley().on('field:validated', function() {
+            var ok = $('.parsley-error').length === 0;
+            $('.bs-callout-info').toggleClass('hidden', !ok);
+            $('.bs-callout-danger').toggleClass('hidden', ok);
+        }).on('form:submit', function () {
+            ClearInlineError("dvError");
+
+            if ($('#operatorId').val() === null || $('#operatorId').val() === "" || parseInt($('#operatorId').val()) === 0 ) {
+
+                InlineErrorMessage("Please select an Operator!", "dvError");
+                return false;
+            }
+
+            if ($('#gameTypeId').val() === null || $('#gameTypeId').val() === "" || parseInt($('#gameTypeId').val()) === 0) {
+
+                InlineErrorMessage("Please select a Game!", "dvError");
+                return false;
+            }
+
+            var frm = $("#frmAddGame");
+            
+            if (!frm.valid()) {
+                InlineErrorMessage("Validation Error! Please check all fields", "dvError");
+                return false;
+            }
+            
+            var params = frm.serializeArray();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ProcessAddRequest", "Game")',
+                data: params,
+                //contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (!data.IsAuthenticated) {
+                        window.location.href = "/Login";
+                        return;
+                    }
+                    if (!data.IsSuccessful) {
+                        InlineErrorMessage(data.Error ? data.Error : "Unknow error occured. Please try again later!", "dvError");
+                       swal({
+                            title: "",
+                            text: data.Error ? data.Error : "Unknow error occured. Please try again later!",
+                            type: "error",
+                            showCancelButton: false,
+                            confirmButtonText: "Close",
+                            closeOnConfirm: true,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+
+                            }
+                        });
+
+                    } else {
+                        $('#dvModal').modal('hide');
+                        swal({
+                            title: "",
+                            text: "Game was added successfully",
+                            type: "success",
+                            showCancelButton: false,
+                            confirmButtonText: "Ok",
+                            closeOnConfirm: false,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                               window.location.reload();
+                            }
+                        });
+                    }
+                },
+                complete: function () {
+                    $(".loader").hide();
+                    $("#loadingMessage").html("");
+                }
+            });
+            return false;
+        });
+
+
+
+    });
+
+
+</script>

@@ -1,0 +1,761 @@
+﻿
+@model  LottoGistAdmin.DataAccess.RemoteModel.EChartItemObj
+@{
+    Layout = null;
+    var error = ViewBag.Error as string;
+    var hasError = !string.IsNullOrEmpty(error);
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>MODIFY ECHART</h2>
+        </div>
+
+        <div class="panel-body">
+            @if (hasError)
+            {
+                <div class="bs-callout bs-callout-danger" id="customError">
+                    <h4>Error!</h4>
+                    <p>@Html.Raw(error)</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+            else
+            {
+                using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmEditManageEChart", data_parsley_validate = "" }))
+                {
+                    @Html.Hidden("EChartId", Model.EChartId)
+                    @Html.Hidden("GameId", Model.GameId)
+                    @Html.Hidden("GameTypeId", Model.GameTypeId)
+                    @Html.Hidden("OperatorId", Model.OperatorId)
+                    @Html.Hidden("GameScheduleId", Model.GameScheduleId)
+                    <div id="dvError"></div>
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="row">
+
+                                <div class="col-md-6">
+                                    DATE
+                                    <div class="form-group">
+                                        <div class="input-group date chartDatePicker" id='ChartDate' data-date-format="dd/mm/yyyy">
+                                            @Html.TextBoxFor(model => model.ChartDate, new { @class = "form-control" })
+                                            <span class="input-group-addon">
+                                                <span class="fa fa-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    GAME
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" readonly value="@Model.GameName" id="GameName" name="GameName" required="" data-parsley-required-message="Please check Game name">
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            TITLE
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <input type="text" class="form-control" value="@Model.Title" id="Title" name="Title">
+                                </div>
+                            </div>
+                            
+                            BANKER
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.BankerValue" id="BankerValue" name="BankerValue" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            TWO SURE
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" readonly value="@Model.TwoSureValueA" id="TwoSureValueA" name="TwoSureValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+
+                                    <input type="number" maxlength="2" minlength="2" min="01" max="90" class="form-control input-sm" value="@Model.TwoSureValueB" id="TwoSureValueB" name="TwoSureValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            THREE DIRECT
+                            <div class="row">
+                                <div class="form-group col-md-2 ">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" readonly value="@Model.ThreeDirectValueA" id="ThreeDirectValueA" name="ThreeDirectValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" readonly value="@Model.ThreeDirectValueB" id="ThreeDirectValueB" name="ThreeDirectValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.ThreeDirectValueC" id="ThreeDirectValueC" name="ThreeDirectValueC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            PERM
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueA" id="PermValueA" name="PermValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueB" id="PermValueB" name="PermValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueC" id="PermValueC" name="PermValueC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueD" id="PermValueD" name="PermValueD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PermValueE" id="PermValueE" name="PermValueE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                STATUS
+                                @Html.CheckBox("StatusVal", Model.StatusVal, new { htmlAttributes = new { @id = "StatusVal", @class = "form-control" } })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            POSITIVE ONES
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueA" id="PositiveOnesValueA" name="PositiveOnesValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueB" id="PositiveOnesValueB" name="PositiveOnesValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueC" id="PositiveOnesValueC" name="PositiveOnesValueC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueD" id="PositiveOnesValueD" name="PositiveOnesValueD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.PositiveOnesValueE" id="PositiveOnesValueE" name="PositiveOnesValueE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            SUPER FIVE
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueA" id="SuperFiveValueA" name="SuperFiveValueA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueB" id="SuperFiveValueB" name="SuperFiveValueB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueC" id="SuperFiveValueC" name="SuperFiveValueC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueD" id="SuperFiveValueD" name="SuperFiveValueD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.SuperFiveValueE" id="SuperFiveValueE" name="SuperFiveValueE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            <div class="form-group" Font-Weight="Bold">
+                                ------------------------------LAST RESULTS---------------------------------
+                            </div>
+                            SUCCESS
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultA" id="LastSuccessResultA" name="LastSuccessResultA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultB" id="LastSuccessResultB" name="LastSuccessResultB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultC" id="LastSuccessResultC" name="LastSuccessResultC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultD" id="LastSuccessResultD" name="LastSuccessResultD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" class="form-control input-sm" value="@Model.LastSuccessResultE" id="LastSuccessResultE" name="LastSuccessResultE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+
+                            MACHINE
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultA" id="LastMachineResultA" name="LastMachineResultA" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultB" id="LastMachineResultB" name="LastMachineResultB" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultC" id="LastMachineResultC" name="LastMachineResultC" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultD" id="LastMachineResultD" name="LastMachineResultD" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="number" maxlength="2" minlength="2" min="1" max="90" class="form-control input-sm" value="@Model.LastMachineResultE" id="LastMachineResultE" name="LastMachineResultE" required="" data-parsley-required-message="Btw (01 & 90)">
+                                </div>
+                            </div>
+                            MESSAGE
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <textarea rows="3" style="resize:vertical" class="form-control" id="Message" name="Message" required="" data-parsley-required-message="Please check Chart Message">@Model.Message</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="fa fa-remove"></i> Close</button>
+                        <button type="submit" class="btn btn-success" id="btnUpdate"> <i class="fa fa-check"></i> Update</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/main/bootstrap-datepicker.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+             $('.chartDatePicker').datepicker({
+                startDate: '-0d',
+                endDate: '+7d',
+                yearRange: 'c-10:c',
+                calendarWeeks: false,
+                todayHighlight: true,
+                clearBtn: true,
+                autoclose: true
+           
+             });
+        });
+
+        //-----------------------Banker Value-----------------------
+        $('#BankerValue').change(function () {
+            if (!($('#BankerValue').val() == null ||
+                $('#BankerValue').val() === "")) {
+
+                $('#TwoSureValueA').val("");
+                $('#ThreeDirectValueA').val("");
+                var banker = $('#BankerValue').val();
+
+                $('#TwoSureValueA').val(banker);
+                $('#ThreeDirectValueA').val(banker);
+
+            }
+        });
+        //-----------------------End Banker Value---------------------
+
+        //-----------------------Two sure-----------------------
+        $('#TwoSureValueB').change(function () {
+            if ($('#TwoSureValueA').val() === $('#TwoSureValueB').val()) {
+
+                alert("You may not repeat the same number twice for TWO-SURE Values");
+                $(this).val("");
+                $(this).select();
+                return false;
+            }
+
+            if (!($('#TwoSureValueB').val() == null ||
+                $('#TwoSureValueB').val() === "")) {
+
+                $('#ThreeDirectValueB').val("");
+                var twoSure = $('#TwoSureValueB').val();
+
+                $('#ThreeDirectValueB').val(twoSure);
+
+            }
+        });
+        //-----------------------End Two sure---------------------
+
+        //-----------------THREE DIRECT------------------------
+        $('#ThreeDirectValueB').change(function () {
+            if (!($('#ThreeDirectValueB').val() == null ||
+                $('#ThreeDirectValueB').val() === "")) {
+                if (!($('#TwoSureValueB').val() == null ||
+                    $('#TwoSureValueB').val() === "")) {
+
+                    $('#ThreeDirectValueB').val("");
+                    var twoSure = $('#TwoSureValueB').val();
+
+                    $('#ThreeDirectValueB').val(twoSure);
+
+                }
+            }
+
+        });
+
+        $('#ThreeDirectValueC').change(function () {
+            if (!($('#ThreeDirectValueC').val() == null ||
+                $('#ThreeDirectValueC').val() === "")) {
+                if ($('#ThreeDirectValueC').val() === $('#ThreeDirectValueB').val() || $('#ThreeDirectValueC').val() === $('#ThreeDirectValueA').val()) {
+                    alert("You may not repeat the same number for THREE-DIRECT Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#ThreeDirectValueA').change(function () {
+            if (!($('#ThreeDirectValueA').val() == null ||
+                $('#ThreeDirectValueA').val() === "")) {
+                if ($('#ThreeDirectValueA').val() === $('#ThreeDirectValueB').val() || $('#ThreeDirectValueA').val() === $('#ThreeDirectValueC').val()) {
+                    alert("You may not repeat the same number for THREE-DIRECT Values");
+                    $(this).val("");
+                    return false;
+                }
+            }
+        });
+
+        $('#ThreeDirectValueB').change(function () {
+            if (!($('#ThreeDirectValueB').val() == null ||
+                $('#ThreeDirectValueB').val() === "")) {
+                if ($('#ThreeDirectValueB').val() === $('#ThreeDirectValueA').val() || $('#ThreeDirectValueB').val() === $('#ThreeDirectValueC').val()) {
+                    alert("You may not repeat the same number for THREE-DIRECT Values");
+                    $(this).val("");
+                    return false;
+                }
+            }
+        });
+
+        $('#PermValueA').change(function () {
+            if (!($('#PermValueA').val() == null ||
+                $('#PermValueA').val() === "")) {
+
+                if ($('#PermValueA').val() === $('#PermValueB').val() || $('#PermValueA').val() === $('#PermValueE').val() ||
+                    $('#PermValueA').val() === $('#PermValueC').val() || $('#PermValueA').val() === $('#PermValueD').val()) {
+
+                    alert("You may not repeat the same number for PERM Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#PermValueB').change(function () {
+            if (!($('#PermValueB').val() == null ||
+                $('#PermValueB').val() === "")) {
+
+                if ($('#PermValueB').val() === $('#PermValueA').val() || $('#PermValueB').val() === $('#PermValueE').val() ||
+                    $('#PermValueB').val() === $('#PermValueC').val() || $('#PermValueB').val() === $('#PermValueD').val()) {
+
+                    alert("You may not repeat the same number for PERM Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#PermValueC').change(function () {
+            if (!($('#PermValueC').val() == null ||
+                $('#PermValueC').val() === "")) {
+
+                if ($('#PermValueC').val() === $('#PermValueA').val() || $('#PermValueC').val() === $('#PermValueE').val() ||
+                    $('#PermValueC').val() === $('#PermValueB').val() || $('#PermValueC').val() === $('#PermValueD').val()) {
+
+                    alert("You may not repeat the same number for PERM Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#PermValueD').change(function () {
+            if (!($('#PermValueD').val() == null ||
+                $('#PermValueD').val() === "")) {
+
+                if ($('#PermValueD').val() === $('#PermValueA').val() || $('#PermValueD').val() === $('#PermValueE').val() ||
+                    $('#PermValueD').val() === $('#PermValueB').val() || $('#PermValueD').val() === $('#PermValueC').val()) {
+
+                    alert("You may not repeat the same number for PERM Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#PermValueE').change(function () {
+            if (!($('#PermValueE').val() == null ||
+                $('#PermValueE').val() === "")) {
+
+                if ($('#PermValueE').val() === $('#PermValueA').val() || $('#PermValueE').val() === $('#PermValueB').val()
+                    || $('#PermValueE').val() === $('#PermValueC').val() || $('#PermValueE').val() === $('#PermValueD').val()) {
+
+                    alert("You may not repeat the same number for PERM Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        //----------------------POSITIVE ONES-------------------------
+        $('#PositiveOnesValueA').change(function () {
+            if (!($('#PositiveOnesValueA').val() == null ||
+                $('#PositiveOnesValueA').val() === "")) {
+
+                if ($('#PositiveOnesValueA').val() === $('#PositiveOnesValueB').val() || $('#PositiveOnesValueA').val() === $('#PositiveOnesValueC').val() ||
+                    $('#PositiveOnesValueA').val() === $('#PositiveOnesValueD').val() || $('#PositiveOnesValueA').val() === $('#PositiveOnesValueE').val()) {
+                    alert("You may not repeat the same number for POSITIVE ONE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#PositiveOnesValueB').change(function () {
+            if (!($('#PositiveOnesValueB').val() == null ||
+                $('#PositiveOnesValueB').val() === "")) {
+
+                if ($('#PositiveOnesValueB').val() === $('#PositiveOnesValueA').val() || $('#PositiveOnesValueB').val() === $('#PositiveOnesValueE').val() ||
+                    $('#PositiveOnesValueB').val() === $('#PositiveOnesValueC').val() || $('#PositiveOnesValueB').val() === $('#PositiveOnesValueD').val()) {
+
+                    alert("You may not repeat the same number for POSITIVE ONE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#PositiveOnesValueC').change(function () {
+            if (!($('#PositiveOnesValueC').val() == null ||
+                $('#PositiveOnesValueC').val() === "")) {
+
+                if ($('#PositiveOnesValueC').val() === $('#PositiveOnesValueA').val() || $('#PositiveOnesValueC').val() === $('#PositiveOnesValueD').val() ||
+                    $('#PositiveOnesValueC').val() === $('#PositiveOnesValueB').val() || $('#PositiveOnesValueC').val() === $('#PositiveOnesValueE').val()) {
+
+                    alert("You may not repeat the same number for POSITIVE ONE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#PositiveOnesValueD').change(function () {
+            if (!($('#PositiveOnesValueD').val() == null ||
+                $('#PositiveOnesValueD').val() === "")) {
+
+                if ($('#PositiveOnesValueD').val() === $('#PositiveOnesValueA').val() || $('#PositiveOnesValueD').val() === $('#PositiveOnesValueC').val() ||
+                    $('#PositiveOnesValueD').val() === $('#PositiveOnesValueB').val() || $('#PositiveOnesValueD').val() === $('#PositiveOnesValueE').val()) {
+
+                    alert("You may not repeat the same number for POSITIVE ONE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#PositiveOnesValueE').change(function () {
+            if (!($('#PositiveOnesValueE').val() == null ||
+                $('#PositiveOnesValueE').val() === "")) {
+
+                if ($('#PositiveOnesValueE').val() === $('#PositiveOnesValueA').val() || $('#PositiveOnesValueE').val() === $('#PositiveOnesValueC').val()
+                    || $('#PositiveOnesValueE').val() === $('#PositiveOnesValueB').val() || $('#PositiveOnesValueE').val() === $('#PositiveOnesValueD').val()) {
+
+                    alert("You may not repeat the same number for POSITIVE ONE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        //-------------------SUPER FIVE---------------------------
+        $('#SuperFiveValueA').change(function () {
+            if (!($('#SuperFiveValueA').val() == null ||
+                $('#SuperFiveValueA').val() === "")) {
+
+                if ($('#SuperFiveValueA').val() === $('#SuperFiveValueB').val() || $('#SuperFiveValueA').val() === $('#SuperFiveValueD').val() ||
+                    $('#SuperFiveValueA').val() === $('#SuperFiveValueC').val() || $('#SuperFiveValueA').val() === $('#SuperFiveValueE').val()) {
+                    alert("You may not repeat the same number for SUPER FIVE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#SuperFiveValueD').change(function () {
+            if (!($('#SuperFiveValueD').val() == null ||
+                $('#SuperFiveValueD').val() === "")) {
+
+                if ($('#SuperFiveValueD').val() === $('#SuperFiveValueB').val() || $('#SuperFiveValueD').val() === $('#SuperFiveValueA').val() ||
+                    $('#SuperFiveValueD').val() === $('#SuperFiveValueC').val() || $('#SuperFiveValueD').val() === $('#SuperFiveValueE').val()) {
+                    alert("You may not repeat the same number for SUPER FIVE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#SuperFiveValueB').change(function () {
+            if (!($('#SuperFiveValueB').val() == null ||
+                $('#SuperFiveValueB').val() === "")) {
+
+                if ($('#SuperFiveValueB').val() === $('#SuperFiveValueC').val() || $('#SuperFiveValueB').val() === $('#SuperFiveValueD').val() ||
+                    $('#SuperFiveValueB').val() === $('#SuperFiveValueA').val() || $('#SuperFiveValueB').val() === $('#SuperFiveValueE').val()) {
+                    alert("You may not repeat the same number for SUPER FIVE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#SuperFiveValueC').change(function () {
+            if (!($('#SuperFiveValueC').val() == null ||
+                $('#SuperFiveValueC').val() === "")) {
+
+                if ($('#SuperFiveValueC').val() === $('#SuperFiveValueB').val() || $('#SuperFiveValueC').val() === $('#SuperFiveValueD').val() ||
+                    $('#SuperFiveValueC').val() === $('#SuperFiveValueA').val() || $('#SuperFiveValueC').val() === $('#SuperFiveValueE').val()) {
+                    alert("You may not repeat the same number for SUPER FIVE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#SuperFiveValueE').change(function () {
+            if (!($('#SuperFiveValueE').val() == null ||
+                $('#SuperFiveValueE').val() === "")) {
+
+                if ($('#SuperFiveValueE').val() === $('#SuperFiveValueB').val() || $('#SuperFiveValueE').val() === $('#SuperFiveValueD').val() ||
+                    $('#SuperFiveValueE').val() === $('#SuperFiveValueA').val() || $('#SuperFiveValueE').val() === $('#SuperFiveValueC').val()) {
+                    alert("You may not repeat the same number for SUPER FIVE Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        //--------------------SUCCESS NUMBER-----------------------
+        $('#LastSuccessResultA').change(function () {
+            if (!($('#LastSuccessResultA').val() == null ||
+                $('#LastSuccessResultA').val() === "")) {
+
+                if ($('#LastSuccessResultA').val() === $('#LastSuccessResultC').val() || $('#LastSuccessResultA').val() === $('#LastSuccessResultD').val() ||
+                    $('#LastSuccessResultA').val() === $('#LastSuccessResultB').val() || $('#LastSuccessResultA').val() === $('#LastSuccessResultE').val()) {
+                    alert("You may not repeat the same number for SUCCESS NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#LastSuccessResultB').change(function () {
+            if (!($('#LastSuccessResultB').val() == null ||
+                $('#LastSuccessResultB').val() === "")) {
+
+                if ($('#LastSuccessResultB').val() === $('#LastSuccessResultC').val() || $('#LastSuccessResultB').val() === $('#LastSuccessResultD').val() ||
+                    $('#LastSuccessResultB').val() === $('#LastSuccessResultA').val() || $('#LastSuccessResultB').val() === $('#LastSuccessResultE').val()) {
+                    alert("You may not repeat the same number for SUCCESS NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#LastSuccessResultC').change(function () {
+            if (!($('#LastSuccessResultC').val() == null ||
+                $('#LastSuccessResultC').val() === "")) {
+
+                if ($('#LastSuccessResultC').val() === $('#LastSuccessResultA').val() || $('#LastSuccessResultC').val() === $('#LastSuccessResultD').val() ||
+                    $('#LastSuccessResultC').val() === $('#LastSuccessResultB').val() || $('#LastSuccessResultC').val() === $('#LastSuccessResultE').val()) {
+                    alert("You may not repeat the same number for SUCCESS NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#LastSuccessResultD').change(function () {
+            if (!($('#LastSuccessResultD').val() == null ||
+                $('#LastSuccessResultD').val() === "")) {
+
+                if ($('#LastSuccessResultD').val() === $('#LastSuccessResultA').val() || $('#LastSuccessResultD').val() === $('#LastSuccessResultC').val() ||
+                    $('#LastSuccessResultD').val() === $('#LastSuccessResultB').val() || $('#LastSuccessResultD').val() === $('#LastSuccessResultE').val()) {
+                    alert("You may not repeat the same number for SUCCESS NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#LastSuccessResultE').change(function () {
+            if (!($('#LastSuccessResultE').val() == null ||
+                $('#LastSuccessResultE').val() === "")) {
+
+                if ($('#LastSuccessResultE').val() === $('#LastSuccessResultC').val() || $('#LastSuccessResultE').val() === $('#LastSuccessResultD').val() ||
+                    $('#LastSuccessResultE').val() === $('#LastSuccessResultB').val() || $('#LastSuccessResultE').val() === $('#LastSuccessResultA').val()) {
+                    alert("You may not repeat the same number for SUCCESS NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        //------------------MACHINE NUMBER------------------------
+        $('#LastMachineResultA').change(function () {
+            if (!($('#LastMachineResultA').val() == null ||
+                $('#LastMachineResultA').val() === "")) {
+
+                if ($('#LastMachineResultA').val() === $('#LastMachineResultB').val() || $('#LastMachineResultA').val() === $('#LastMachineResultD').val() ||
+                    $('#LastMachineResultA').val() === $('#LastMachineResultC').val() || $('#LastMachineResultA').val() === $('#LastMachineResultE').val()) {
+                    alert("You may not repeat the same number for MACHINE NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#LastMachineResultB').change(function () {
+            if (!($('#LastMachineResultB').val() == null ||
+                $('#LastMachineResultB').val() === "")) {
+
+                if ($('#LastMachineResultB').val() === $('#LastMachineResultA').val() || $('#LastMachineResultB').val() === $('#LastMachineResultD').val() ||
+                    $('#LastMachineResultB').val() === $('#LastMachineResultC').val() || $('#LastMachineResultB').val() === $('#LastMachineResultE').val()) {
+                    alert("You may not repeat the same number for MACHINE NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#LastMachineResultC').change(function () {
+            if (!($('#LastMachineResultC').val() == null ||
+                $('#LastMachineResultC').val() === "")) {
+
+                if ($('#LastMachineResultC').val() === $('#LastMachineResultB').val() || $('#LastMachineResultC').val() === $('#LastMachineResultD').val() ||
+                    $('#LastMachineResultC').val() === $('#LastMachineResultA').val() || $('#LastMachineResultC').val() === $('#LastMachineResultE').val()) {
+                    alert("You may not repeat the same number for MACHINE NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#LastMachineResultD').change(function () {
+            if (!($('#LastMachineResultD').val() == null ||
+                $('#LastMachineResultD').val() === "")) {
+
+                if ($('#LastMachineResultD').val() === $('#LastMachineResultB').val() || $('#LastMachineResultD').val() === $('#LastMachineResultA').val() ||
+                    $('#LastMachineResultD').val() === $('#LastMachineResultC').val() || $('#LastMachineResultD').val() === $('#LastMachineResultE').val()) {
+                    alert("You may not repeat the same number for MACHINE NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+        $('#LastMachineResultE').change(function () {
+            if (!($('#LastMachineResultE').val() == null ||
+                $('#LastMachineResultE').val() === "")) {
+
+                if ($('#LastMachineResultE').val() === $('#LastMachineResultB').val() || $('#LastMachineResultE').val() === $('#LastMachineResultD').val() ||
+                    $('#LastMachineResultE').val() === $('#LastMachineResultC').val() || $('#LastMachineResultE').val() === $('#LastMachineResultA').val()) {
+                    alert("You may not repeat the same number for MACHINE NUMBER Values");
+                    $(this).val("");
+                    $(this).select();
+                    return false;
+                }
+            }
+        });
+
+
+
+        $('#frmEditManageEChart').parsley().on('field:validated', function() {
+            var ok = $('.parsley-error').length === 0;
+            $('.bs-callout-info').toggleClass('hidden', !ok);
+            $('.bs-callout-danger').toggleClass('hidden', ok);
+        }).on('form:submit', function () {
+            ClearInlineError("dvError");
+
+
+            var frm = $("#frmEditManageEChart");
+
+            if (!frm.valid()) {
+                InlineErrorMessage("Validation Error! Please check all fields", "dvError");
+                return false;
+            }
+            var param = frm.serializeArray();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ProcessUpdateRequest", "ManageEChart")',
+                data: param,
+                success: function (data) {
+                    if (!data.IsAuthenticated) {
+                        window.location.href = "/Login";
+                        return;
+                    }
+                    if (!data.IsSuccessful) {
+                        InlineErrorMessage(data.Error ? data.Error : "Unknow error occured. Please try again later!", "dvError");
+                        swal({
+                            title: "",
+                            text: data.Error ? data.Error : "Unknow error occured. Please try again later!",
+                            type: "error",
+                            showCancelButton: false,
+                            confirmButtonText: "Close",
+                            closeOnConfirm: true
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+
+                            }
+                        });
+
+                    } else {
+                        $('#dvModal').modal('hide');
+                        swal({
+                            title: "",
+                            text: "Echart was modified successfully",
+                            type: "success",
+                            showCancelButton: false,
+                            confirmButtonText: "Ok",
+                            closeOnConfirm: false,
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                },
+                complete: function () {
+                    $(".loader").hide();
+                    $("#loadingMessage").html("");
+                }
+            });
+            return false;
+        });
+
+
+    </script>

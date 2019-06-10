@@ -1,0 +1,84 @@
+﻿@model IEnumerable<PPFrameworkManager.PortalObjs.RoleItemObj>
+@{
+    ViewBag.Title = "Portal Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-default" style="min-height: 500px">
+    <div class="panel-heading">
+        <div><span class="fa fa-user fa-2x" aria-hidden="true"></span> <b>PORTAL ROLES</b></div>
+    </div>
+    <div class="panel-body table-responsive">
+        <div class="row ">
+            <div class="col-sm-12"><a class="btn btn-success pull-right" href="@Url.Action("_AddRole", "PortalRole")" data-modal=""><i class="fa fa-plus margright10"></i> Add Role</a></div>
+            <div class="col-sm-12">
+                <div class="tab-content" style="min-height: 400px; background-color: #fff">
+                    @{
+                        var errorMessage = ViewBag.Error as string;
+                        if (!string.IsNullOrEmpty(errorMessage) && errorMessage.Length > 1)
+                        {
+                            <div class="bs-callout bs-callout-danger ">
+                                <h4>Error!</h4>
+                                <p>@Html.Raw(errorMessage)</p>
+                            </div>
+                        }
+                    }
+
+                    <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div>Role Name</div>
+                                </th>
+                                <th>
+                                    <div>Status</div>
+                                </th>
+
+                                <th>
+                                    <div>Action</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.StatusName</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                @{
+                                                    if (item.RoleId <= 3)
+                                                    {
+                                                        
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="btn btn-success" style="margin-bottom: 0;" href="@Url.Action("_EditRole", "PortalRole", new {roleId = item.RoleId})" data-modal=""><i class="fa fa-edit margright10"></i> Edit </a>
+
+                                                    }
+                                                }
+
+
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="approveAgent" tabindex="-1" role="dialog" aria-hidden="true">
+    <span id="approveModal"></span>
+</div>
+
+
+
+
+
